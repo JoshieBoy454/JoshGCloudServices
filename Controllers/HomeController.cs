@@ -1,5 +1,8 @@
-using JoshGCloudServices.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using JoshGCloudServices.Models;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace JoshGCloudServices.Controllers
@@ -7,14 +10,22 @@ namespace JoshGCloudServices.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Home()
         {
+            List<Products> products = Products.GetAllProducts();
+
+            int? userID = _httpContextAccessor.HttpContext.Session.GetInt32("UserID");
+
+            ViewData["Products"] = products;
+            ViewData["UserID"] = userID;
             return View();
         }
 
@@ -22,18 +33,22 @@ namespace JoshGCloudServices.Controllers
         {
             return View();
         }
+
         public IActionResult About()
         {
             return View();
         }
+
         public IActionResult MyWork()
         {
             return View();
         }
+
         public IActionResult Privacy()
         {
             return View();
         }
+
         public IActionResult Index()
         {
             return View();
