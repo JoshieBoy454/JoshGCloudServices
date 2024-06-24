@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "My Work";
-    var userID = ViewData["userID"];
+    var userID = ViewData["userID"]as int?;
     var products = ViewData["Products"] as List<JoshGCloudServices.Models.Products>;
 }
 <!DOCTYPE html>
@@ -99,6 +99,11 @@
                     <button class="price-box">R<span>550</span></button>
                 </h5>
                 <p>Crafted with care from the heartwood of aged oak trees, this handcrafted wooden shelf whispers tales of the forest with its rich grain patterns and warm, earthy hues. Each knot and whorl tells a story of nature's embrace, while the sturdy build ensures a timeless companion for your cherished belongings. Let it stand as a testament to the artisan's skill and the enduring beauty of natural materials, inviting admiration and enchantment into any space it graces.</p>
+                <form action="/Transaction/UpdateTransaction" method="post">
+                    <input type="hidden" name="productName" value="Oak Shelf">
+                    <input type="hidden" name="price" value="550">
+                    <button type="submit">Place Order</button>
+                </form>
             </div>
             <div class="item">
                 <h4>Cherry-Maple Chair</h4>
@@ -107,6 +112,11 @@
                     <button class="price-box">R<span>700</span></button>
                 </h5>
                 <p>Carved from the warmth of cherry maple wood, this chair embodies the elegance of nature's finest offerings. Its smooth, polished surface bears the marks of artisanal dedication, each curve and contour a testament to meticulous craftsmanship. With a gentle embrace, it invites you to linger, offering comfort and support as you savor the simple joys of life. A timeless piece destined to become an heirloom, adding a touch of rustic charm and sophistication to any setting.</p>
+                <form action="/Transaction/UpdateTransaction" method="post">
+                    <input type="hidden" name="productName" value="Cherry-Maple Chair">
+                    <input type="hidden" name="price" value="700">
+                    <button type="submit">Place Order</button>
+                </form>
             </div>
             <div class="item">
                 <h6>Birch Dinning Table</h6>
@@ -115,6 +125,11 @@
                     <button class="price-box">R<span>1200</span></button>
                 </h5>
                 <p>Crafted from the whispering winds of birch forests, this dining table brings the serenity of nature into your home. Its pale, luminous surface reflects the purity of untouched snow, while the intricate grain patterns tell tales of seasons past. Sturdy yet graceful, it stands as a beacon of rustic elegance, inviting loved ones to gather and share in the abundance of life. Let its natural beauty be the centerpiece of your home, fostering moments of togetherness and nourishment that linger long after the meal is done.</p>
+                <form action="/Transaction/UpdateTransaction" method="post">
+                    <input type="hidden" name="productName" value="Birch Dinning Table">
+                    <input type="hidden" name="price" value="1200">
+                    <button type="submit">Place Order</button>
+                </form>
             </div>
         </div>
     </div>
@@ -123,9 +138,14 @@
 
 
     ;
-@if (userID != null)
+@if (userID.HasValue)
 {
     <p>User ID: @userID</p>
+}
+else
+{
+    <p>User ID not available</p>
+
 }
 
 
@@ -142,20 +162,29 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var product in products)
+        @if(products !=null)
+        {
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                    <td>@product.Category</td>
+                    <td>@product.Availability</td>
+                    <td>
+                        <form asp-controller="Transaction" asp-action="PlaceOrder" method="post">
+                            <input type="hidden" name="userID" value="@userID" />
+                            <input type="hidden" name="productID" value="@product.ProductID" />
+                            <button type="submit">Place Order</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@product.Name</td>
-                <td>@product.Price</td>
-                <td>@product.Category</td>
-                <td>@product.Availability</td>
-                <td>
-                    <form asp-controller="Transaction" asp-action="PlaceOrder" method="post">
-                        <input type="hidden" name="userID" value="@userID" />
-                        <input type="hidden" name="productID" value="@product.ProductID" />
-                        <button type="submit">Place Order</button>
-                    </form>
-                </td>
+                <td colspan="5">No products available.</td>
             </tr>
         }
     </tbody>
